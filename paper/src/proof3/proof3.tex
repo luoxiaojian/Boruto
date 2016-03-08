@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\begin{document}
+
+\newtheorem{defi}{Definition}
+\newtheorem{lemm}{Lemma}
+
+\begin{lemm}
+	For a task set $\Gamma$ with a total utilization of $m*ut$ ($0 < ut \leq 1$), 
+	if execution assignment is rational in each zone $Z_i$ ($i \in [0, k), k \leq znum$), 
+	and overload effect occurs in zone $Z_k$, 
+	then $\exists Z_d$ is a destination zone, $d \ne k$, $Z_k \Rightarrow Z_d$.
+\end{lemm}
+
+\begin{proof}
+	We consider interval $[ZEnd_k, hp)$ as a special big zone $Z_B$, $ZStart_B = ZEnd_k$; $ZEnd_B = hp$; $ZWidth_B = hp - ZEnd_k$; $Cap_B = ZWidth_B \cdot m$. \\ 
+	$Zones = \{ Z_i : i = 0,1,2,...,k,B \}$; $S = \{ Z : Z \in Zones, Z_k \Rightarrow Z\}$; $\bar{S} = \{ Z : Z \in Zones, Z \notin S, Z \neq Z_k \}$. \\ 
+	$overflow = \sum\limits_{i=0}^{n-1} alloc_{i,k} - m \cdot ZWidth_k$;
+	$tr = \sum\limits_{i=0}^{k-1} Rem_i$. \\
+	For a job $J_{i,j}$, $S_1 = J_{i,j} \cap S$, $S_2 = J_{i,j} \cap \bar{S} \neq \O$. 
+	\[
+		\sum\limits_{Z_l \in S_2} alloc_{i,l} = MIN(C_i, \sum\limits_{Z_l \in S_2} ZWidth_l) \geq \dfrac{C_i}{T_i} \sum\limits_{Z_l \in S_2} ZWidth_l	
+	\]
+	The equality holds only if $S_1 = \O$.
+	So for all jobs having an intersection with $\bar{S}$, the total executing time in $\bar{S}$:
+	\[
+		E(\bar{S}) = \sum\limits_{J_{i,j} \cap \bar{S} \neq \O} \sum\limits_{Z_l \in J_{i,j} \cap \bar{S}} alloc_{i,l} \geq \sum\limits_{Z_l \in \bar{S}} ZWidth_l \sum\limits_{i=0}^{n-1} \dfrac{C_i}{T_i}
+		= m \cdot ut \sum\limits_{Z_l \in \bar{S}} ZWidth_l.
+	\]
+	The equality holds only if for each task $\tau_i \in \Gamma$, any job of $\tau_i$ locates complete in either $S$ or $\bar{S}$. It is known that only time $0$ and $hp$ can be such boundaries, so we can get that
+	\begin{equation}
+		E(\bar{S}) > m \cdot ut \sum\limits_{Z_l \in \bar{S}} ZWidth_l \label{exp1}.
+	\end{equation}
+	On the other hand, the assigned time units of $Z_l$ is 
+	\[
+		A(Z_l) = \{
+			\begin{aligned}
+				& m \cdot ZWidth_l - Rem_l & l = 0, 1, 2, ..., k-1 & \\
+				& m \cdot ut \cdot hp - m \sum\limits_{i=0}^{k} ZWidth_i + tr -overflow & l = B & \\
+			\end{aligned}
+	\]
+		\\
+	\textbf{case1:} $Z_B \in S$\\
+	In this case, $Z_k \Rightarrow Z_B$. 
+	Assuming that $Z_k \to Z_B$, then $\exists \tau_i \in \Gamma$, the current job $J_{i,j}$ satisfys the conditions that $JStart_{i,j} \leq ZStart_k$, $JEnd_{i,j} \geq ZEnd_l$, $alloc_{i,k} > 0$, and $alloc_{i,l}<ZWidth_l$. This contradict to the definition of overload effect. So $\exists Z_{o1}, Z_{o2}, ..., Z_{oz} \in Zones : Z_k \to Z_{o1}, Z_{o1} \to Z_{o2}, ..., Z_{oz} \to Z_B$, $Z_{oz} \neq Z_k, Z_{oz} \neq Z_B$.  \\
+	$\exists J_{i,j}$ is a current job, $alloc_{oz} > 0$ and $L_{i,k} > ZWidth_k$, which means $Z_{oz}$ is a destination zone. \\
+	\textbf{case2:} $Z_B \in \bar{S}$,
+	$\mathop{{\bar{S}}'} = \bar{S} - Z_B$
+	\[
+		\begin{split}
+		A(\bar{S}) = m \cdot ut \cdot hp - m \sum\limits_{Z_l \in \mathop{{\bar{S}}'} \cup {Z_k}} ZWidth_l + tr - \sum\limits_{Z_l \in \mathop{{\bar{S}}'}} Rem_l - overflow \\
+		\leq m \cdot ut \sum\limits_{Z_l \in \bar{S}} ZWidth_l + tr - \sum\limits_{Z_l \in \mathop{{\bar{S}}'}} Rem_l - overflow
+	\end{split}
+	\]
+	If $\exists Z_d \in S : Rem_d > 0$, $Z_d$ is the destination zone.
+	Assume that $\forall Z_l \in S, Rem_l = 0$, we can get that $tr = \sum\limits_{Z_l \in \mathop{{\bar{S}}'}} Rem_l$, 
+	$A(\bar{S}) \leq m \cdot ut \sum\limits_{Z_l \in \bar{S}} ZWidth_l$.
+	This is contradict to inequation \ref{exp1}.\\
+	In conclusion, $\exists Z_d$ is a destination zone, $d \ne k$, $Z_k \Rightarrow Z_d$.
+\end{proof}
+	
+
+
+\end{document}

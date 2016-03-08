@@ -1,0 +1,88 @@
+\subsection{Symbol definition}
+This article considers a shared memory system.
+The system is modeled as $m$ processors and a task set $\Gamma = \{\tau_0, \tau_1, ..., \tau_{n-1} \}$. \\
+Each task $\tau_i$ is characterized by its worst-case execution time $C_i$ and its period $T_i$, both of which are assumed to be integer multiples of a system unit time.
+We consider real-time tasks with implicit deadlines.
+That is, $T_i$ is also the relative deadline of task $\tau_i$.
+The weight for task $\tau_i$ is defined as $W_i = \dfrac{C_i}{T_i}$, and the system utilization is $U_\Gamma = \sum\limits_{i=0}^{n-1} W_i$.
+We assume that $0 < W_i < 1$, and $0 < U_\Gamma < m$. \\
+A job $J_{i,j}$ is the $j$th task instance of task $\tau_i$. It arrives at time $JStart_{i,j} = j \cdot T_i$ and need to complete its execution by its deadline at time $JEnd_{i,j} = (j+1) \cdot T_i$.
+Assuming that the first job of each task arrives at time 0.
+That is, $\forall \tau_i \in \Gamma, JStart_{i,0} = 0$.  \\
+The multiprocessor real-time scheduling problem is to construct a peroidc schedule for the above tasks, which allocates exactly $C_i$ time units of a processor to task $\tau_i$ within each interval $[(k-1) \cdot T_i, k \cdot T_i)$ for all $k \in \{1,2,3,...\}$, subject to the following constraints:
+\begin{compactitem}
+\item C1: A processor can only be allocated to one task at any time, that is, processors cannot be shared concurrently;
+\item C2: A task can only be allocated at most one processor at any time, that is, tasks are not parallel and thus cannot occupy more than one processor at any time.
+\end{compactitem}
+The least common multiple of all tasks' period is $H_\Gamma$.
+Because of the periodic property of the problem, we only consider the schedule from time 0 to time $H_\Gamma$.
+We split the time range $[0, H_\Gamma)$ into $znum$ zones with consecutive deadlines.
+Each zone $Z_i$ start at time $ZStart_i$ and end at time $ZEnd_i$.
+$\forall c, \exists (i,j), ZStart_c = j \cdot T_i, ZStart_c < ZEnd_c$ and $ZEnd_c = ZStart_{c+1}$($c = 0,...,znum-2$). \\
+The scheduling during $[0, H_\Gamma)$ is expressed by a matrix $M$ with $n$ rows and $znum$ columns.
+Elements in M denoted as $alloc_{i,j}$ represents the execution time units assigned to $\tau_i$ in $Z_j$.
+The scheduling matrix only specifies the assigned units amount, without concerning the exact time and processor a task is to execute.\\
+\begin{table}[H]
+\caption{Symbol table}
+\centering
+\label{tab_sym}
+\begin{tabular}{ll}
+	\hline
+	$m$            & number of processors in system \\
+	$n$            & number of tasks in system \\
+	$znum$         & number of zones in system \\
+	$\tau_i$       & the $i$th task \\
+	$C_i$          & worst case execution time of $\tau_i$ \\
+	$T_i$          & period of $\tau_i$ \\
+	$W_i$          & weight of $\tau_i$ \\
+	$\Gamma$       & task set, \{$\tau_0$, ..., $\tau_{n-1}$\} \\
+	$H_\Gamma$     & hyperperiod of $\Gamma$ \\
+	$U_\Gamma$     & the system utilization \\
+	$J_{i,j}$      & the $j$th job of $\tau_i$ \\
+	$JStart_{i,j}$ & the start time of $J_{i,j}$ \\
+	$JEnd_{i,j}$   & the end time of $J_{i,j}$ \\
+	$Z_i$					 & the $i$th Zone\\
+	$ZStart_i$     & the start time of $Z_i$ \\
+	$ZEnd_i$       & the end time of $Z_i$ \\
+	$ZWidth_i$     & the width of $Z_i$ \\
+	$Rem_i$        & unassigned time units in $Z_i$ \\
+	$L_i$			     & laxity of $\tau_i$ \\
+	$R_i$					 & remaining execution time of $\tau_i$ \\
+	$alloc_{i,j}$  & assigned time units for $\tau_i$ in $Z_j$ \\
+	\hline
+\end{tabular}
+\end{table}
+All the symbols are listed in \ref{tab_sym}.
+
+\subsection{Overload effect}
+\begin{defi}
+The minimum load of $\tau_i$ in $Z_k$ is the minimum units of execution time that must be assigned to $\tau_i$ in $Z_k$ to meet the deadline.
+\[
+	Lt_{i,k}=MAX(0,ZWidth_k-L_{i,k})
+\]
+\end{defi}
+
+\begin{defi}
+The maximum load of $\tau_i$ in $Z_k$ is the maximum units of execution time that can be assigned to $\tau_i$ in $Z_k$ considering the WCET of a job and the width of a Zone(to ensure a task can only be executed in a processor at a time).
+\[
+	Mt_{i,k}=MIN(R_{i,k}, ZWidth_k)
+\]
+\end{defi}
+
+\begin{defi}
+The execution assignment is \textbf{rational} in $Z_k$ if execution time assigned to each task is between minimum load and maximum load, and the sum of execution time of tasks in $\Gamma$ doesn't exceed the capacity of $Z_k$.
+\[
+	\forall i \in [0,n) : Lt_{i,k} \leq alloc_{i,k} \leq Mt_{i,k}
+\]
+\[
+	\sum\limits_{i=0}^{n-1}alloc_{i,k} \leq m \cdot ZWidth_k
+\]
+\end{defi}
+
+\begin{defi}
+\textbf{Overload effect} occurs if the total minimum load of tasks in $\Gamma$ is more than the capacity of $Z_k$.
+\[
+	\sum\limits_{i=0}^{n-1}Lt_{i,k} > m \cdot ZWidth_k
+\]
+\end{defi}
+

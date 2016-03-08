@@ -1,0 +1,20 @@
+\documentclass{article}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\begin{document}
+
+\newtheorem{defi}{Definition}
+\newtheorem{lemm}{Lemma}
+
+This article considers a global multiprocessor scheduling algorithm for periodic task sets. 
+The system is modeled as $m$ processors and a task set $\Gamma = \{\tau_0, \tau_1, ..., \tau_{n-1}\}$, which is a set of $n$ perodic tasks.
+Each task $\tau_i$ is characterized by its worst-case execution time $C_i$ and its period $T_i$, both of which are assumed to be integer multiples of a system unit time.
+We consider real-time tasks with implicit deadlines.
+That is, $T_i$ is also the relative deadline of task $\tau_i$.
+The weight of $\tau_i$ is defined as $W_i = \dfrac{C_i}{T_i}$, and the system utilization is $U_\Gamma = \sum\limits_{i=0}^{n-1} W_i$. Without loss of generality, we assume that $W_i < 1$.
+
+Assuming that the first task instance(or job) of each task arrives at time 0, the $j$th job of task $\tau_i$($J_{i,j}$) arrives at time $JStart_{i,j} = j \cdot T_i$ and needs to complete its execution by its deadline at time $JEnd_{i,j} = (j+1) \cdot T_i (j \geq 0)$.
+
+\end{document}
+

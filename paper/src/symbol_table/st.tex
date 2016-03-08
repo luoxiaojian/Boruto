@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage{textcomp}
+\usepackage{amsmath}
+\begin{document}
+\centering
+
+\begin{tabular}{l|l}
+	\hline
+	$m$            & number of processors in system \\
+	$n$            & number of tasks in system \\
+	$znum$         & number of zones in system \\
+	$\tau_i$       & the $i$th task \\
+	$C_i$          & worst case execution time of $\tau_i$ \\
+	$T_i$          & period of $\tau_i$, relative deadline of $\tau_i$ \\
+	$W_i$          & weight of $\tau_i$, $W_i = \dfrac{C_i}{T_i}$ \\
+	$\Gamma$       & task set, \{$\tau_0$, $\tau_1$, ..., $\tau_{n-1}$\} \\
+	$H_\Gamma$     & hyperperiod of $\Gamma$ \\
+	$U_\Gamma$     & the system utilization, $U_\Gamma = \sum\limits_{i=0}^{n-1} W_i$ \\
+	$J_{i,j}$      & the $j$th job of $\tau_i$ \\
+	$JStart_{i,j}$ & the start time of $J_{i,j}$, which equals $j \cdot T_i$ \\
+	$JEnd_{i,j}$   & the end time of $J_{i,j}$, which equals $(j+1) \cdot T_i$ \\
+	$Z_i$					 & the $i$th Zone\\
+	$ZStart_i$     & the start time of $Z_i$ \\
+	$ZEnd_i$       & the end time of $Z_i$ \\
+	$ZWidth_i$     & the width of $Z_i$, which equals $ZEnd_i-ZStart_i$ \\
+	$Rem_i$        & the number of unassigned execution time units in $Z_i$ \\
+	$Lt_{i,j}$     & minimum time units $\tau_i$ must execute in $Z_j$ \\
+	$Mt_{i,j}$     & maximum time units $\tau_i$ can execute in $Z_j$ \\
+	$L_{i,j}$      & laxity of $\tau_i$ before allocating $Z_j$ \\
+	$R_{i,j}$      & remaining execution time of $\tau_i$ before allocating $Z_j$ \\
+	$alloc_{i,j}$  & the number of assigned execution time units for $\tau_i$ in $Z_j$ \\
+	\hline
+\end{tabular}
+\end{document}

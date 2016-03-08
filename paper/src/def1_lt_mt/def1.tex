@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\begin{document}
+
+\newtheorem{defi}{Definition}
+\newtheorem{lemm}{Lemma}
+
+\begin{defi}
+The minimum load of $\tau_i$ in $Z_k$ is the minimum units of execution time that must be assigned to $\tau_i$ in $Z_k$ to meet the deadline.
+\[
+	Lt_{i,k}=MAX(0,ZWidth_k-L_{i,k})
+\]
+\end{defi}
+
+\begin{defi}
+The maximum load of $\tau_i$ in $Z_k$ is the maximum units of execution time that can be assigned to $\tau_i$ in $Z_k$ considering the WCET of a job and the width of a Zone(to ensure a task can only be executed in a processor at a time).
+\[
+	Mt_{i,k}=MIN(R_{i,k}, ZWidth_k)
+\]
+\end{defi}
+
+\begin{defi}
+The execution assignment is \textbf{rational} in $Z_k$ if execution time assigned to each task is between minimum load and maximum load, and the sum of execution time of tasks in $\Gamma$ doesn't exceed the capacity of $Z_k$.
+\[
+	\forall i \in [0,n) : Lt_{i,k} \leq alloc_{i,k} \leq Mt_{i,k}
+\]
+\[
+	\sum\limits_{i=0}^{n-1}alloc_{i,k} \leq Cap_k
+\]
+\end{defi}
+
+\begin{defi}
+\textbf{Overload effect} occurs if the total minimum load of tasks in $\Gamma$ is more than the capacity of $Z_k$.
+\[
+	\sum\limits_{i=0}^{n-1}Lt_{i,k} > Cap_k
+\]
+\end{defi}
+
+\begin{defi}
+Zone $Z_p$ \textbf{zone-connects} to zone $Z_q$ in $J_{i,k}$, denoted as $Z_p \to Z_q$, if
+\[
+	Z_p \in J_{i,k}, Z_q \in J_{i,k}
+\]
+and
+\[
+	alloc_{i,p}>0, alloc_{i,q}<ZWidth_q.
+\]
+The connection between $Z_p$ and $Z_q$ is called a \textbf{zone-connection}.
+\end{defi}
+
+\begin{defi}
+	Zone $Z_p$ \textbf{connects} to zone $Z_q$ denoted as $Z_p \Rightarrow Z_q$ if
+	\[
+		Z_p \to Z_q
+	\]
+	or
+	\[
+		\exists k : Z_p \Rightarrow Z_k, Z_k \Rightarrow Z_q.
+	\]
+\end{defi}
+
+\begin{defi}
+	During scheduling, the overload effect occurs in the current zone $Z_k$. A zone $Z_d$ is called a \textbf{destination zone} if \\
+	(1) $\exists J_{i,j}$ is a current job ($JStart_{i,j} \leq ZStart_k, JEnd_{i,j} \geq ZEnd_k$), $Z_d \in J_{i,j}$, $alloc_{i,d}>0$, $L_{i,k}>0$. or \\
+	(2) $Rem_d > 0$. \\
+	The element $alloc_{i,d}$ in scheduling matrix is called a \textbf{destination point}.
+\end{defi}
+
+\begin{lemm}
+	When overload effect occurs in $Z_k$, there exist a destination zone $Z_d$, if $Rem_d=0$, there exist a destination point $alloc_{i,d}$.
+\end{lemm}
+
+\begin{proof}
+...
+\end{proof}
+
+\begin{lemm}
+	For a taskset $\Gamma$ with a total utilization of $m*ut$ ($0 < ut \leq 1$), 
+	if execution assignment is rational in each zone $Z_i$ ($i \in [0, k), k \leq znum$), 
+	and overload effect occurs in zone $Z_k$, 
+	then $\exists Z_d$ is a destination zone, $d \ne k$, $Z_k \Rightarrow Z_d$.
+\end{lemm}
+
+\begin{proof}
+	...
+\end{proof}
+	
+
+
+\end{document}
+

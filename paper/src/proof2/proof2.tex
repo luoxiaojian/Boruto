@@ -1,0 +1,80 @@
+\documentclass{article}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\begin{document}
+
+\newtheorem{defi}{Definition}
+\newtheorem{lemm}{Lemma}
+
+\begin{defi}
+	During scheduling, the overload effect occurs in the current zone $Z_k$. A zone $Z_d$ is called a \textbf{destination zone} if \\
+%	(1) $\exists J_{i,j}$ is a current job ($JStart_{i,j} \leq ZStart_s, JEnd_{i,j} \geq ZEnd_s$), $Z_d \in J_{i,j}$, $alloc_{i,d}>0$ $R_{i,k} < C_i$, $L_{i,s}>ZWidth_s$. or \\
+	(1) $\exists \tau_i \in \Gamma : R_{i,s} < C_i, L_{i,s} > ZWidth_s$, $J_{i,j}$ is the current job of $\tau_i$, $Z_d \in J_{i,j}$ and $alloc_{i,d}>0$. or\\
+	(2) $Rem_d > 0$. \\ 
+	The element $alloc_{i,d}$ in scheduling matrix is called a \textbf{destination point}.
+\end{defi}
+
+\begin{lemm}
+	When overload effect occurs in $Z_k$, there exist a destination zone $Z_d$, if $Rem_d=0$, there exist a destination point $alloc_{i,d}$.
+\end{lemm}
+
+\begin{proof}
+	(1)$\exists i \in [0,k), Rem_i>0$, $Z_i$ is a destination zone. \\
+	(2)$\forall i \in [0,k), Rem_i=0$. We assume that $\forall \tau_i \in \Gamma : alloc_{i,k}>0$, then: \\
+		for $\tau_i \in \Gamma$, $J_{i,j}$ is the current job. If $JEnd_{i,j} = ZEnd_k$, then
+		\[
+			\dfrac{\sum\limits_{t=k+1}^{znum-1} alloc_{i,t}}{\sum\limits_{t=k+1}^{znum-1} ZWidth_t} 
+			= \dfrac{C_i}{T_i}
+		\]
+		If $JEnd_{i,j}>ZEnd_k$, then
+		\[
+			\dfrac{\sum\limits_{t=k+1}^{znum-1} alloc_{i,t}}{\sum\limits_{t=k+1}^{znum-1} ZWidth_t}
+			= \dfrac{C_i \cdot rcj_i + JEnd_{i,j} - ZEnd_k}{T_i \cdot rcj_i + JEnd_{i,j} - ZEnd_k}
+			> \dfrac{C_i}{T_i}
+		\]
+		($rcj_i$ is the number of remaining complete job of $\tau_i$).\\
+		So the total remaining execution units needed in the zones after $Z_k$ is 
+		\[
+			\sum\limits_{i=0}^{n-1} \sum\limits_{t=k+1}^{znum-1} alloc_{i,t} \geq 
+			\sum\limits_{i=0}^{n-1} \dfrac{C_i}{T_i} \cdot \sum\limits_{t=k+1}^{znum-1} ZWidth_t =
+			m \cdot \sum\limits_{t=k+1}^{znum-1} ZWidth_t
+		\]
+		This contratict to 
+		\[
+			\sum\limits_{i=0}^{n-1} \sum\limits_{t=0}^{znum-1} alloc_{i,t} =
+			m * \sum\limits_{t=0}^{znum-1} ZWidth_t .
+		\]
+		So $\exists \tau_i \in \Gamma : alloc_{i,k} = 0$, which means $L_{i,s} > ZWidth_s$.
+		$\Gamma_e = \{ \tau_i : \tau_i \in \Gamma , alloc_{i,k}=0 \}$. \\
+
+		We assume that $\forall \tau_i \in \Gamma_e, R_{i,k} = C_i$.
+		For $\tau_i \in \Gamma_e$, 
+		\[
+			\dfrac{\sum\limits_{t=k+1}^{znum-1} alloc_{i,t}}{\sum\limits_{t=k+1}^{znum-1} ZWidth_t} =
+			\dfrac{C_i + C_i \cdot rcj}{T_i-(ZEnd_k-JStart_{i,j_i}) + T_i \cdot rcj} \leq
+			\dfrac{C_i}{T_i} .
+		\]
+		For $\tau_i \notin \Gamma_e$,
+		\[
+			\dfrac{\sum\limits_{t=k+1}^{znum-1} alloc_{i,t}}{\sum\limits_{t=k+1}^{znum-1} ZWidth_t} =
+			\dfrac{T_i - (ZEnd_k-JStart_{i,j_i} + C_i \cdot rcj}{T_i-(ZEnd_k-JStart_{i,j_i}) + T_i \cdot rcj} \leq
+			\dfrac{C_i}{T_i} .
+		\]
+		So the total remaining execution units needed in the zones after $Z_k$ is
+		\[
+			\sum\limits_{i=0}^{n-1} \sum\limits_{t=k+1}^{znum-1} alloc_{i,t} \geq 
+			\sum\limits_{i=0}^{n-1} \dfrac{C_i}{T_i} \cdot \sum\limits_{t=k+1}^{znum-1} ZWidth_t =
+			m \cdot \sum\limits_{t=k+1}^{znum-1} ZWidth_t
+		\]
+		This contratict to 
+		\[
+			\sum\limits_{i=0}^{n-1} \sum\limits_{t=0}^{znum-1} alloc_{i,t} =
+			m * \sum\limits_{t=0}^{znum-1} ZWidth_t .
+		\]
+		So $\exists \tau_i \in \Gamma_e : R_{i,k} < C_i$.
+		In conclusion, $\exists \tau_i \in \Gamma : R_{i,k} < C_i, L_{i,s} > ZWidth_s$, there exist a destination zone.
+\end{proof}
+
+\end{document}
+

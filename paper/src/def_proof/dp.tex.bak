@@ -1,0 +1,189 @@
+\documentclass{article}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\begin{document}
+
+\newtheorem{defi}{Definition}
+\newtheorem{lemm}{Lemma}
+
+\begin{defi}
+The minimum load of $\tau_i$ in $Z_k$ is the minimum units of execution time that must be assigned to $\tau_i$ in $Z_k$ to meet the deadline.
+\[
+	Lt_{i,k}=MAX(0,ZWidth_k-L_{i,k})
+\]
+\end{defi}
+
+\begin{defi}
+The maximum load of $\tau_i$ in $Z_k$ is the maximum units of execution time that can be assigned to $\tau_i$ in $Z_k$ considering the WCET of a job and the width of a Zone(to ensure a task can only be executed in a processor at a time).
+\[
+	Mt_{i,k}=MIN(R_{i,k}, ZWidth_k)
+\]
+\end{defi}
+
+\begin{defi}
+The execution assignment is \textbf{rational} in $Z_k$ if execution time assigned to each task is between minimum load and maximum load, and the sum of execution time of tasks in $\Gamma$ doesn't exceed the capacity of $Z_k$.
+\[
+	\forall i \in [0,n) : Lt_{i,k} \leq alloc_{i,k} \leq Mt_{i,k}
+\]
+\[
+	\sum\limits_{i=0}^{n-1}alloc_{i,k} \leq m \cdot ZWidth_k
+\]
+\end{defi}
+
+\begin{defi}
+\textbf{Overload effect} occurs if the total minimum load of tasks in $\Gamma$ is more than the capacity of $Z_k$.
+\[
+	\sum\limits_{i=0}^{n-1}Lt_{i,k} > m \cdot ZWidth_k
+\]
+\end{defi}
+
+\begin{defi}
+Zone $Z_p$ \textbf{zone-connects} to zone $Z_q$ in $J_{i,j}$, denoted as $Z_p \to Z_q$, if
+\[
+	Z_p \in J_{i,j}, Z_q \in J_{i,j}
+\]
+and
+\[
+	alloc_{i,p}>0, alloc_{i,q}<ZWidth_q.
+\]
+The connection between $Z_p$ and $Z_q$ is called a \textbf{zone-connection}.
+\end{defi}
+
+\begin{defi}
+	Zone $Z_p$ \textbf{connects} to zone $Z_q$ denoted as $Z_p \Rightarrow Z_q$ if
+	\[
+		Z_p \to Z_q
+	\]
+	or
+	\[
+		\exists Z_k : Z_p \Rightarrow Z_k, Z_k \Rightarrow Z_q.
+	\]
+\end{defi}
+
+\begin{defi}
+	During scheduling, the overload effect occurs in the current zone $Z_k$. A zone $Z_d$ is called a \textbf{destination zone} if \\
+%	(1) $\exists J_{i,j}$ is a current job ($JStart_{i,j} \leq ZStart_s, JEnd_{i,j} \geq ZEnd_s$), $Z_d \in J_{i,j}$, $alloc_{i,d}>0$ $R_{i,k} < C_i$, $L_{i,s}>ZWidth_s$. or \\
+	(1) $\exists \tau_i \in \Gamma : R_{i,s} < C_i, L_{i,s} > ZWidth_s$, $J_{i,j}$ is the current job of $\tau_i$, $Z_d \in J_{i,j}$ and $alloc_{i,d}>0$. or\\
+	(2) $Rem_d > 0$. \\ 
+	The element $alloc_{i,d}$ in scheduling matrix is called a \textbf{destination point}.
+\end{defi}
+
+\begin{lemm}
+	When overload effect occurs in $Z_k$, there exist a destination zone $Z_d$, if $Rem_d=0$, there exist a destination point $alloc_{i,d}$.
+\end{lemm}
+
+\begin{proof}
+	(1)$\exists i \in [0,k), Rem_i>0$, $Z_i$ is a destination zone. \\
+	(2)$\forall i \in [0,k), Rem_i=0$. We assume that $\forall \tau_i \in \Gamma : alloc_{i,k}>0$, then: \\
+		for $\tau_i \in \Gamma$, $J_{i,j}$ is the current job. If $JEnd_{i,j} = ZEnd_k$, then
+		\[
+			\dfrac{\sum\limits_{t=k+1}^{znum-1} alloc_{i,t}}{\sum\limits_{t=k+1}^{znum-1} ZWidth_t} 
+			= \dfrac{C_i}{T_i}
+		\]
+		If $JEnd_{i,j}>ZEnd_k$, then
+		\[
+			\dfrac{\sum\limits_{t=k+1}^{znum-1} alloc_{i,t}}{\sum\limits_{t=k+1}^{znum-1} ZWidth_t}
+			= \dfrac{C_i \cdot rcj_i + JEnd_{i,j} - ZEnd_k}{T_i \cdot rcj_i + JEnd_{i,j} - ZEnd_k}
+			> \dfrac{C_i}{T_i}
+		\]
+		($rcj_i$ is the number of remaining complete job of $\tau_i$).\\
+		So the total remaining execution units needed in the zones after $Z_k$ is 
+		\[
+			\sum\limits_{i=0}^{n-1} \sum\limits_{t=k+1}^{znum-1} alloc_{i,t} \geq 
+			\sum\limits_{i=0}^{n-1} \dfrac{C_i}{T_i} \cdot \sum\limits_{t=k+1}^{znum-1} ZWidth_t =
+			U_\Gamma \cdot \sum\limits_{t=k+1}^{znum-1} ZWidth_t
+		\]
+		This contratict to 
+		\[
+			\sum\limits_{i=0}^{n-1} \sum\limits_{t=k}^{znum-1} alloc_{i,t} <
+			U_\Gamma \cdot \sum\limits_{t=0}^{znum-1} ZWidth_t - m \cdot \sum\limits_{t=0}^{k} < U_\Gamma \cdot \sum\limits_{t=k+1}^{znum-1} ZWidth_t.
+		\]
+		So $\exists \tau_i \in \Gamma : alloc_{i,k} = 0$, which means $L_{i,k} > ZWidth_k$.
+		$\Gamma_e = \{ \tau_i : \tau_i \in \Gamma , alloc_{i,k}=0 \}$. \\
+
+		We assume that $\forall \tau_i \in \Gamma_e, R_{i,k} = C_i$.
+		For $\tau_i \in \Gamma_e$, 
+		\[
+			\dfrac{\sum\limits_{t=k+1}^{znum-1} alloc_{i,t}}{\sum\limits_{t=k+1}^{znum-1} ZWidth_t} =
+			\dfrac{C_i + C_i \cdot rcj}{T_i-(ZEnd_k-JStart_{i,j_i}) + T_i \cdot rcj} \leq
+			\dfrac{C_i}{T_i} .
+		\]
+		For $\tau_i \notin \Gamma_e$,
+		\[
+			\dfrac{\sum\limits_{t=k+1}^{znum-1} alloc_{i,t}}{\sum\limits_{t=k+1}^{znum-1} ZWidth_t} =
+			\dfrac{T_i - (ZEnd_k-JStart_{i,j_i} + C_i \cdot rcj}{T_i-(ZEnd_k-JStart_{i,j_i}) + T_i \cdot rcj} \leq
+			\dfrac{C_i}{T_i} .
+		\]
+		So the total remaining execution units needed in the zones after $Z_k$ is
+		\[
+			\sum\limits_{i=0}^{n-1} \sum\limits_{t=k+1}^{znum-1} alloc_{i,t} \geq 
+			\sum\limits_{i=0}^{n-1} \dfrac{C_i}{T_i} \cdot \sum\limits_{t=k+1}^{znum-1} ZWidth_t =
+			U_\Gamma \cdot \sum\limits_{t=k+1}^{znum-1} ZWidth_t
+		\]
+		This contratict to 
+		\[
+			\sum\limits_{i=0}^{n-1} \sum\limits_{t=0}^{znum-1} alloc_{i,t} < U_\Gamma \cdot \sum\limits_{t=k+1}^{znum-1} ZWidth_t.
+		\]
+		So $\exists \tau_i \in \Gamma_e : R_{i,k} < C_i$.
+		In conclusion, $\exists \tau_i \in \Gamma : R_{i,k} < C_i, L_{i,k} > ZWidth_k$, there exist a destination zone.
+\end{proof}
+
+\begin{lemm}
+	For a taskset $\Gamma$ with a total utilization of $U_\Gamma$, 
+	if execution assignment is rational in each zone $Z_i$ ($i \in [0, k), k < znum$), 
+	and overload effect occurs in zone $Z_k$, 
+	then $\exists Z_d$ is a destination zone, $d \ne k$, $Z_k \Rightarrow Z_d$.
+\end{lemm}
+
+\begin{proof}
+	We consider interval $[ZEnd_k, hp)$ as a special big zone $Z_B$, $ZStart_B = ZEnd_k$; $ZEnd_B = hp$; $ZWidth_B = hp - ZEnd_k$. \\ 
+	$Zones = \{ Z_i : i = 0,1,2,...,k,B \}$; $S = \{ Z : Z \in Zones, Z_k \Rightarrow Z\}$; $\bar{S} = \{ Z : Z \in Zones, Z \notin S, Z \neq Z_k \}$. \\ 
+	$overflow = \sum\limits_{i=0}^{n-1} alloc_{i,k} - m \cdot ZWidth_k$;
+	$tr = \sum\limits_{i=0}^{k-1} Rem_i$. \\
+	For a job $J_{i,j}$, $S_1 = J_{i,j} \cap S$, $S_2 = J_{i,j} \cap \bar{S} \neq \O$. 
+	\[
+		\sum\limits_{Z_l \in S_2} alloc_{i,l} = MIN(C_i, \sum\limits_{Z_l \in S_2} ZWidth_l) \geq \dfrac{C_i}{T_i} \sum\limits_{Z_l \in S_2} ZWidth_l	
+	\]
+	The equality holds only if $S_1 = \O$.
+	So for all jobs having an intersection with $\bar{S}$, the total executing time in $\bar{S}$:
+	\[
+		E(\bar{S}) = \sum\limits_{J_{i,j} \cap \bar{S} \neq \O} \sum\limits_{Z_l \in J_{i,j} \cap \bar{S}} alloc_{i,l} \geq \sum\limits_{Z_l \in \bar{S}} ZWidth_l \sum\limits_{i=0}^{n-1} \dfrac{C_i}{T_i}
+		= m \cdot ut \sum\limits_{Z_l \in \bar{S}} ZWidth_l.
+	\]
+	The equality holds only if for each task $\tau_i \in \Gamma$, any job of $\tau_i$ locates complete in either $S$ or $\bar{S}$. It is known that only time $0$ and $hp$ can be such boundaries, so we can get that
+	\begin{equation}
+		E(\bar{S}) > m \cdot ut \sum\limits_{Z_l \in \bar{S}} ZWidth_l \label{exp1}.
+	\end{equation}
+	On the other hand, the assigned time units of $Z_l$ is 
+	\[
+		A(Z_l) = \{
+			\begin{aligned}
+				& m \cdot ZWidth_l - Rem_l & l = 0, 1, 2, ..., k-1 & \\
+				& m \cdot ut \cdot hp - m \sum\limits_{i=0}^{k} ZWidth_i + tr -overflow & l = B & \\
+			\end{aligned}
+	\]
+		\\
+	\textbf{case1:} $Z_B \in S$\\
+	In this case, $Z_k \Rightarrow Z_B$. 
+	Assuming that $Z_k \to Z_B$, then $\exists \tau_i \in \Gamma$, the current job $J_{i,j}$ satisfys the conditions that $JStart_{i,j} \leq ZStart_k$, $JEnd_{i,j} \geq ZEnd_l$, $alloc_{i,k} > 0$, and $alloc_{i,l}<ZWidth_l$. This contradict to the definition of overload effect. So $\exists Z_{o1}, Z_{o2}, ..., Z_{oz} \in Zones : Z_k \to Z_{o1}, Z_{o1} \to Z_{o2}, ..., Z_{oz} \to Z_B$, $Z_{oz} \neq Z_k, Z_{oz} \neq Z_B$.  \\
+	$\exists J_{i,j}$ is a current job, $alloc_{oz} > 0$ and $L_{i,k} > ZWidth_k$, which means $Z_{oz}$ is a destination zone. \\
+	\textbf{case2:} $Z_B \in \bar{S}$,
+	$\mathop{{\bar{S}}'} = \bar{S} - Z_B$
+	\[
+		\begin{split}
+		A(\bar{S}) = m \cdot ut \cdot hp - m \sum\limits_{Z_l \in \mathop{{\bar{S}}'} \cup {Z_k}} ZWidth_l + tr - \sum\limits_{Z_l \in \mathop{{\bar{S}}'}} Rem_l - overflow \\
+		\leq m \cdot ut \sum\limits_{Z_l \in \bar{S}} ZWidth_l + tr - \sum\limits_{Z_l \in \mathop{{\bar{S}}'}} Rem_l - overflow
+	\end{split}
+	\]
+	If $\exists Z_d \in S : Rem_d > 0$, $Z_d$ is the destination zone.
+	Assume that $\forall Z_l \in S, Rem_l = 0$, we can get that $tr = \sum\limits_{Z_l \in \mathop{{\bar{S}}'}} Rem_l$, 
+	$A(\bar{S}) \leq m \cdot ut \sum\limits_{Z_l \in \bar{S}} ZWidth_l$.
+	This is contradict to inequation \ref{exp1}.\\
+	In conclusion, $\exists Z_d$ is a destination zone, $d \ne k$, $Z_k \Rightarrow Z_d$.
+\end{proof}
+	
+
+
+\end{document}
+
